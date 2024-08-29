@@ -50,17 +50,17 @@ SC_MODULE(Processor) {
         ex_datapath->pz(pz);
 
         ex_controller = new Controller("ex_controller");
-        ex_controller->Instr(Instr);
+        ex_controller->instructionCode(Instr);
         ex_controller->z(z);
         ex_controller->pz(pz);
         ex_controller->readStack(rstack);
         ex_controller->writeStack(wstack);
-        ex_controller->gocall(gocall);
+        ex_controller->goCall(gocall);
         ex_controller->skip(skip);
-        ex_controller->d(d);
+        ex_controller->registerFileWrite(d);
         ex_controller->ti(ti);
         ex_controller->lw(lw);
-        ex_controller->wew(wew);
+        ex_controller->accumulatorWrite(wew);
         ex_controller->sw(sw);
         ex_controller->gotoznz(gotoznz);
     }

@@ -109,8 +109,8 @@ SC_MODULE(Datapath) {
         ex_adder = new Adder<IADDR_WIDTH>("ex_adder");
         ex_adder->a(PC);
         ex_adder->b(PC3);
-        ex_adder->y(PCPlus);
-        ex_adder->cout(error_imem);
+        ex_adder->result(PCPlus);
+        ex_adder->carryOut(error_imem);
 
         ex_stack = new Stack<IADDR_WIDTH, STACK_ADDR_WIDTH, STACK_DEPTH>("ex_stack");
         ex_stack->data_in(PCPlus);
@@ -153,7 +153,7 @@ SC_MODULE(Datapath) {
         const4.write(Instr.read().range(13, 7));
         ex_alu->in_instr(const4);
         ex_alu->ffc(wffc);
-        ex_alu->out(Data_Bus);
+        ex_alu->output(Data_Bus);
         ex_alu->c(c);
 
         ex_ffc = new Ffc("ex_ffc");

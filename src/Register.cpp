@@ -1,14 +1,6 @@
 #include "Register.h"
 
 template<int WIDTH>
-void Register<WIDTH>::process() {
-    if (!reset.read())
-        q.write(0);
-    else if (clk.posedge())
-        q.write(d.read());
-}
-
-template<int WIDTH>
 void Register_we<WIDTH>::process() {
     if (!reset.read())
         q.write(0);

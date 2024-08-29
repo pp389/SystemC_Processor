@@ -20,6 +20,15 @@ SC_MODULE(Register) {
     void process();
 };
 
+template<int WIDTH>
+void Register<WIDTH>::process() {
+    if (!reset.read())
+        q.write(0);
+    else if (clk.posedge())
+        q.write(d.read());
+}
+
+
 template<int WIDTH = 8>
 SC_MODULE(Register_we) {
     sc_in<bool> clk, reset, we;
