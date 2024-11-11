@@ -21,7 +21,7 @@ SC_MODULE(TopLevel) {
     sc_out<sc_uint<IADDR_WIDTH>> IAddr;
     sc_out<sc_uint<DADDR_WIDTH>> DAddr;
     sc_out<sc_uint<DATA_WIDTH>> Write_Data;
-    sc_in<sc_uint<DATA_WIDTH>> Read_Data;
+    sc_out<sc_uint<DATA_WIDTH>> Read_Data;
     sc_out<bool> error_imem, error_stack;
     sc_out<sc_uint<DATA_WIDTH>> Data_Bus;
     sc_out<sc_uint<INSTR_WIDTH>> Instr;
@@ -72,5 +72,27 @@ SC_MODULE(TopLevel) {
 
     void assign_instr();
 };
+
+template<
+    int DATA_WIDTH,
+    int DADDR_WIDTH,
+    int INSTR_WIDTH,
+    int IADDR_WIDTH,
+    int STACK_ADDR_WIDTH,
+    int REGFILE_ADDR_WIDTH,
+    int STACK_DEPTH,
+    int REGFILE_DEPTH
+>
+void TopLevel<DATA_WIDTH,
+    DADDR_WIDTH,
+    INSTR_WIDTH,
+    IADDR_WIDTH,
+    STACK_ADDR_WIDTH,
+    REGFILE_ADDR_WIDTH,
+    STACK_DEPTH,
+    REGFILE_DEPTH>::assign_instr()
+{
+    Instr.write(IRD.read().range(INSTR_WIDTH - 1, 0));
+}
 
 #endif //TOPLEVEL_H

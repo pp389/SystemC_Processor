@@ -45,25 +45,39 @@ SC_MODULE(Datapath) {
     sc_signal<sc_uint<7>> const4;
 
     // Moduły
-    Register<IADDR_WIDTH> *ex_pc;
-    Mux2_1<IADDR_WIDTH> *ex_pc1, *ex_pc2, *ex_pc3, *ex_pc5;
-    Ffc *ex_rstack;
-    Adder<IADDR_WIDTH> *ex_adder;
-    Stack<IADDR_WIDTH, STACK_ADDR_WIDTH, STACK_DEPTH> *ex_stack;
-    RegisterFile<REGFILE_ADDR_WIDTH, REGFILE_DEPTH, DATA_WIDTH> *ex_regfile;
-    Mux2_1<DATA_WIDTH> *ex_A_ALU, *ex_W1;
-    Register_we<DATA_WIDTH> *ex_W;
-    ALU<DATA_WIDTH> *ex_alu;
-    Ffc *ex_ffc, *ex_ffpz;
+    Register<IADDR_WIDTH>* ex_pc;
+    Mux2_1<IADDR_WIDTH>* ex_pc1, * ex_pc2, * ex_pc3, * ex_pc5;
+    Ffc* ex_rstack;
+    Adder<IADDR_WIDTH>* ex_adder;
+    Stack<IADDR_WIDTH, STACK_ADDR_WIDTH, STACK_DEPTH>* ex_stack;
+    RegisterFile<REGFILE_ADDR_WIDTH, REGFILE_DEPTH, DATA_WIDTH>* ex_regfile;
+    Mux2_1<DATA_WIDTH>* ex_A_ALU, * ex_W1;
+    Register_we<DATA_WIDTH>* ex_W;
+    ALU<DATA_WIDTH>* ex_alu;
+    Ffc* ex_ffc, * ex_ffpz;
 
-    SC_CTOR(Datapath) {
-        k1 = Instr.read().range(7, 0);
-        k2 = Instr.read().range(9, 0);
-        f = Instr.read().range(6, 0);
+    // Proces do odczytu Instr i ustawienia sygnałów k1, k2, f
+    void process_instr() {
+        k1.write(Instr.read().range(7, 0));    // 8 bitów od 0 do 7
+        k2.write(Instr.read().range(9, 0));    // 10 bitów od 0 do 9
+        f.write(Instr.read().range(6, 0));     // 7 bitów od 0 do 6
+        const4.write(Instr.read().range(13, 7));  // 7 bitów od 7 do 13
+    }
 
+    // Konstruktor
+    SC_CTOR(Datapath) :
+        clk("clk"),
+        reset("reset"),
+        Instr("Instr")
+    {
         const1.write(1);
         const2.write(2);
 
+        // Zarejestrowanie procesu do obsługi sygnału Instr
+        SC_METHOD(process_instr);
+        sensitive << Instr;  // Proces wrażliwy na zmiany sygnału Instr
+
+        // Inicjalizacja innych modułów
         ex_pc = new Register<IADDR_WIDTH>("ex_pc");
         ex_pc->clk(clk);
         ex_pc->reset(reset);
@@ -89,11 +103,11 @@ SC_MODULE(Datapath) {
         ex_pc3->y(PC3);
 
         ex_pc5 = new Mux2_1<IADDR_WIDTH>("ex_pc5");
-        ex_pc5->d0(k2);
+        ex_pc5->d0(k2);  // k2 pochodzi z Instr
 
         sc_bv<IADDR_WIDTH> temp;
-        temp.range(IADDR_WIDTH-1, IADDR_WIDTH-2) = 0;
-        temp.range(IADDR_WIDTH-3, 0) = k1.read();
+        temp.range(IADDR_WIDTH - 1, IADDR_WIDTH - 2) = 0;
+        temp.range(IADDR_WIDTH - 3, 0) = k1.read();  // k1 pochodzi z Instr
         const3.write(temp.to_uint());
         ex_pc5->d1(const3);
 
@@ -150,7 +164,6 @@ SC_MODULE(Datapath) {
         ex_alu = new ALU<DATA_WIDTH>("ex_alu");
         ex_alu->a(A_ALU);
         ex_alu->b(Write_Data);
-        const4.write(Instr.read().range(13, 7));
         ex_alu->in_instr(const4);
         ex_alu->ffc(wffc);
         ex_alu->output(Data_Bus);
@@ -179,6 +192,7 @@ SC_MODULE(Datapath) {
 
     void assign_addresses();
 };
+
 
 
 #endif //DATAPATH_H

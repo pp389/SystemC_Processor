@@ -19,7 +19,6 @@ add_executable(Processor
         Stack.h
         Datapath.h
         Datapath.cpp
-        Datapath.cpp
         Processor.h
         DataMemory.h
         InstructionMemory.h
