@@ -1,3 +1,5 @@
+#include <iostream>
+#include <bitset>
 #include "Controller.h"
 
 void Controller::process() {
@@ -28,4 +30,10 @@ void Controller::process() {
         registerFileWrite.write(1);
     else
         registerFileWrite.write(0);
+}
+
+void Controller::trace_operation() {
+    if (traceEnabled) {
+        std::cout << "time = " << sc_time_stamp() << ", [CONTROLLER] Instruction: " << std::bitset<14>(instructionCode.read()) << std::endl;
+    }
 }

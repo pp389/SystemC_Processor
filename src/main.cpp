@@ -1,71 +1,49 @@
-#include <systemc.h>
-#include "TopLevel.h"  // Zak≥adajπc, øe modu≥ jest zapisany w tym pliku
+Ôªø#include <systemc.h>
+#include "TopLevel.h"
 
-// G≥Ûwna klasa symulacyjna
-SC_MODULE(testbench)
-{
-    // Deklaracja sygna≥Ûw
-    sc_signal<bool> clk, reset;
-    sc_signal<sc_uint<10>> IAddr;
-    sc_signal<sc_uint<8>> DAddr;
-    sc_signal<sc_uint<8>> Write_Data;
-    sc_signal<sc_uint<8>> Read_Data;
+int sc_main(int argc, char* argv[]) {
+    // Sygna≈Çy
+    sc_clock clk("clk", 10, SC_NS);  // Okres zegara 10 ns
+    sc_signal<bool> reset;  // Sygna≈Ç resetu
+    sc_signal<sc_uint<8>> read_data;
+    sc_signal<sc_uint<14>> instr;
+    sc_signal<sc_uint<10>> iaddr;
+    sc_signal<sc_uint<8>> daddr;
+    sc_signal<sc_uint<8>> write_data;
+    sc_signal<bool> sw;  // Sygna≈Ç sw
     sc_signal<bool> error_imem, error_stack;
-    sc_signal<sc_uint<8>> Data_Bus;
-    sc_signal<sc_uint<14>> Instr;
+    sc_signal<sc_uint<8>> data_bus;
 
-    // Instancja CPU
-    TopLevel<> cpu_inst;
+    // Inicjalizacja modu≈Çu TopLevel
+    TopLevel<8, 8, 14, 10, 3, 7, 8, 128>* top = new TopLevel<8, 8, 14, 10, 3, 7, 8, 128>("TopLevel");
 
-    // Proces generujπcy sygna≥ zegara
-    void generate_clk()
-    {
-        while (true) {
-            clk.write(true);
-            wait(10, SC_NS);  // Czas trwania jednej po≥owy cyklu zegara
-            clk.write(false);
-            wait(10, SC_NS);  // Czas trwania drugiej po≥owy cyklu zegara
-        }
-    }
+    // Po≈ÇƒÖczenie sygna≈Ç√≥w
+    top->clk(clk);
+    top->reset(reset);
+    top->IAddr(iaddr);
+    top->DAddr(daddr);
+    top->Write_Data(write_data);
+    top->Read_Data(read_data);
+    top->error_imem(error_imem);
+    top->error_stack(error_stack);
+    top->Data_Bus(data_bus);
+    top->Instr(instr);
 
-    // Proces generujπcy sygna≥ resetu
-    void generate_reset()
-    {
-        reset.write(true);
-        wait(20, SC_NS);  // Czas resetu
-        reset.write(false);
-    }
 
-    // Konstruktor
-    SC_CTOR(testbench)
-        : cpu_inst("cpu_inst")
-    {
-        // Po≥πczenie sygna≥Ûw z instancjπ CPU
-        cpu_inst.clk(clk);
-        cpu_inst.reset(reset);
-        cpu_inst.IAddr(IAddr);
-        cpu_inst.DAddr(DAddr);
-        cpu_inst.Write_Data(Write_Data);
-        cpu_inst.Read_Data(Read_Data);
-        cpu_inst.error_imem(error_imem);
-        cpu_inst.error_stack(error_stack);
-        cpu_inst.Data_Bus(Data_Bus);
-        cpu_inst.Instr(Instr);
+    // Resetowanie
+    reset = false;
+    sc_start(5, SC_NS);  // Czekaj chwilƒô, by procesor m√≥g≈Ç siƒô zresetowaƒá
+    reset = true;
 
-        // Procesy
-        SC_THREAD(generate_clk);
-        SC_THREAD(generate_reset);
-    }
-};
+    // Rozpoczƒôcie symulacji na 100 ns, aby procesor m√≥g≈Ç odczytaƒá instrukcje i je wykonaƒá
+    sc_start(100, SC_NS);
 
-// G≥Ûwna funkcja symulacyjna
-int sc_main(int argc, char* argv[])
-{
-    // Utworzenie obiektu testbench
-    testbench tb("tb");
+    top->processor->ex_datapath->ex_regfile->dump();
+    std::cout << "ACCUMULATOR: " << top->processor->ex_datapath->ex_W->q << std::endl;
+    top->dataMemory->dump();
 
-    // Uruchomienie symulacji przez 1000 jednostek czasu
-    sc_start(1000, SC_NS);
+    // Zwolnienie pamiƒôci
+    delete top;
 
     return 0;
 }

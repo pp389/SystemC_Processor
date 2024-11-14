@@ -35,12 +35,16 @@ SC_MODULE(Register_we) {
     sc_in<sc_uint<WIDTH>> d;
     sc_out<sc_uint<WIDTH>> q;
 
+    bool traceEnabled = true;
+
     SC_CTOR(Register_we) {
         SC_METHOD(process);
         sensitive << clk.pos() << reset.neg();
     }
 
     void process();
+
+    void trace_operation();
 };
 
 template<int WIDTH>
@@ -48,10 +52,19 @@ void Register_we<WIDTH>::process() {
     if (!reset.read())
         q.write(0);
     else if (clk.posedge()) {
-        if (we.read())
+        if (we.read()) {
             q.write(d.read());
+            trace_operation();
+        }
         else
             q.write(q.read());
+    }
+}
+
+template<int WIDTH>
+void Register_we<WIDTH>::trace_operation() {
+    if (traceEnabled) {
+        std::cout << "time = " << sc_time_stamp() << ", [ACCUMULATOR] Write to accumulator, value = " << d.read() << std::endl;
     }
 }
 

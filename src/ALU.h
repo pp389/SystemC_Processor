@@ -2,6 +2,7 @@
 #define ALU_H
 
 #include <systemc>
+#include <bitset>
 
 using namespace sc_core;
 using namespace sc_dt;
@@ -35,12 +36,16 @@ SC_MODULE(ALU) {
     //bit number (in_instr[2:0])
     sc_uint<3> bitNumber;
 
+    bool traceEnabled = false;
+
     SC_CTOR(ALU) {
         SC_METHOD(alu_process);
-        sensitive << a << b << in_instr << ffc;
+        sensitive << in_instr << a << b << ffc;
     }
 
     void alu_process();
+
+    void trace_operation(std::string icode, std::string opcode, std::string instr);
 };
 
 template<int DATA_WIDTH>
@@ -54,25 +59,30 @@ void ALU<DATA_WIDTH>::alu_process() {
         case 0b00: {
             switch (operationCode) {
                 case 0b0111: {
+                    trace_operation("0b00", "0b0111", "addwf");
                     sc_uint<DATA_WIDTH + 1> result = a.read() + b.read();
                     c.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }
                 case 0b0101: {
+                    trace_operation("0b00", "0b0101", "andwf");
                     output.write(a.read() & b.read());
                     break;
                 }
                 case 0b0001: {
+                    trace_operation("0b00", "0b0001", "clrf, clrw");
                     output.write(0);
                     break;
                 }
                 case 0b1001: {
+                    trace_operation("0b00", "0b1001", "comf");
                     output.write(~a.read());
                     break;
                 }
                 case 0b0011:
                 case 0b1011: {
+                    trace_operation("0b00", "0b0011, 0b1011", "decf, decfsz");
                     sc_uint<DATA_WIDTH + 1> result = a.read() - 1;
                     c.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
@@ -80,44 +90,53 @@ void ALU<DATA_WIDTH>::alu_process() {
                 }
                 case 0b1010:
                 case 0b1111: {
+                    trace_operation("0b00", "0b1010, 0b1111", "incf, incfsz");
                     sc_uint<DATA_WIDTH + 1> result = a.read() + 1;
                     c.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }
                 case 0b0100: {
+                    trace_operation("0b00", "0b0100", "iorwf");
                     output.write(a.read() | b.read());
                     break;
                 }
                 case 0b1000: {
+                    trace_operation("0b00", "0b1000", "movf");
                     output.write(a.read());
                     break;
                 }
                 case 0b0000: {
+                    trace_operation("0b00", "0b0000", "movwf, nop");
                     output.write(b.read());
                     break;
                 }
                 case 0b1101: { // rlf
+                    trace_operation("0b00", "0b1101", "rlf");
                     c.write(a.read()[DATA_WIDTH - 1]);
                     output.write((a.read() << 1) | ffc.read());
                     break;
                 }
                 case 0b1100: { // rrf
+                    trace_operation("0b00", "0b1100", "rrf");
                     c.write(a.read()[0]);
                     output.write((ffc.read() << (DATA_WIDTH - 1)) | (a.read() >> 1));
                     break;
                 }
                 case 0b0010: {
+                    trace_operation("0b00", "0b0010", "subwf");
                     sc_uint<DATA_WIDTH + 1> result = a.read() - b.read();
                     c.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }
                 case 0b1110: {
+                    trace_operation("0b00", "0b1110", "swapf");
                     output.write((a.read().range(3, 0), a.read().range(7, 4)));
                     break;
                 }
                 case 0b0110: {
+                    trace_operation("0b00", "0b0110", "xorwf");
                     output.write(a.read() ^ b.read());
                     break;
                 }
@@ -131,15 +150,18 @@ void ALU<DATA_WIDTH>::alu_process() {
         case 0b01: {
             switch (operationCode.range(3, 2)) {
                 case 0b00: {
+                    trace_operation("0b01", "0b00", "bcf");
                     output.write(a.read() & (~(1 << bitNumber)));
                     break;
                 }
                 case 0b01: {
+                    trace_operation("0b01", "0b01", "bsf");
                     output.write(a.read() | (1 << bitNumber));
                     break;
                 }
                 case 0b10:
                 case 0b11: {
+                    trace_operation("0b01", "0b10, 0b11", "btfsc, btfss");
                     output.write(a.read() & (1 << bitNumber));
                     break;
                 }
@@ -150,48 +172,58 @@ void ALU<DATA_WIDTH>::alu_process() {
             switch (operationCode) {
                 case 0b1111:
                 case 0b1110: {
+                    trace_operation("0b11", "0b1111, 0b1110", "addlw");
                     sc_uint<DATA_WIDTH + 1> result = a.read() + b.read();
                     c.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }
                 case 0b1001: {
+                    trace_operation("0b11", "0b1001", "andlw");
                     output.write(a.read() & b.read());
                     break;
                 }
                 case 0b1000: {
+                    trace_operation("0b11", "0b1000", "iorlw");
                     output.write(a.read() | b.read());
                     break;
                 }
                 case 0b0000: {
+                    trace_operation("0b11", "0b0000", "movlw");
                     output.write(a.read());
                     break;
                 }
                 case 0b0001:
                 case 0b0010: {
+                    trace_operation("0b11", "0b1001, 0b0010", "lw, sw");
                     output.write(b.read());
                     break;
                 }
                 case 0b1101:
                 case 0b1100: {
+                    trace_operation("0b11", "0b1101, 0b1100", "sublw");
                     sc_uint<DATA_WIDTH + 1> result = a.read() - b.read();
                     c.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }
                 case 0b1010: {
+                    trace_operation("0b11", "0b1010", "xorlw");
                     output.write(a.read() ^ b.read());
                     break;
                 }
                 case 0b0100: {
+                    trace_operation("0b11", "0b0100", "retlw");
                     output.write(a.read());
                     break;
                 }
                 case 0b0101: {
+                    trace_operation("0b11", "0b0101", "gotoz");
                     output.write(b.read());
                     break;
                 }
                 case 0b0110: {
+                    trace_operation("0b11", "0b0110", "gotonz");
                     output.write(b.read());
                     break;
                 }
@@ -205,6 +237,12 @@ void ALU<DATA_WIDTH>::alu_process() {
           		output.write(b.read());
         }
     }
+}
+
+template<int DATA_WIDTH>
+void ALU<DATA_WIDTH>::trace_operation(std::string icode, std::string opcode, std::string instr) {
+    if(traceEnabled) 
+        std::cout << "time = " << sc_time_stamp() << " [ALU] icode " << icode << ", opcode " << opcode << ": " << instr << std::endl;
 }
 
 #endif //ALU_H

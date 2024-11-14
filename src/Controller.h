@@ -42,12 +42,16 @@ SC_MODULE(Controller) {
     //and also for the gotonz instruction in the case of a non-zero result of the previous operation
     sc_out<bool> gotoznz;
 
+    bool traceEnabled = false;
+
     SC_CTOR(Controller) {
         SC_METHOD(process);
         sensitive << instructionCode << z << pz;
     }
 
     void process();
+
+    void trace_operation();
 };
 
 #endif //CONTROLLER_H
