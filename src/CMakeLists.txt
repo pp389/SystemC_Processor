@@ -83,3 +83,10 @@ add_executable(DataMemory_testbench
 )
 target_link_libraries(DataMemory_testbench SystemC::systemc)
 
+add_executable(Controller_testbench
+        Controller_testbench.cpp
+        Controller.h
+        Controller.cpp
+)
+target_link_libraries(Controller_testbench SystemC::systemc)
+

@@ -3,6 +3,7 @@
 #include "Controller.h"
 
 void Controller::process() {
+    trace_operation();
     lw.write(instructionCode.read().range(13, 8) == 0b110001);
     sw.write(instructionCode.read().range(13, 8) == 0b110010);
     bool call = (instructionCode.read().range(13, 11) == 0b100);

@@ -3,6 +3,7 @@
 
 #include <systemc.h>
 #include <iostream>
+#include <bitset>
 
 template<int ADDR_SIZE = 8, int WORD_SIZE = 8>
 SC_MODULE(DataMemory) {
