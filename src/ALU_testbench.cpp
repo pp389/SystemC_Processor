@@ -28,23 +28,41 @@ SC_MODULE(ALU_testbench) {
 
     void test_add() {
         std::cout << "----------------ADDITION TEST----------------" << std::endl;
+        //test 1
         a.write(10);
         b.write(5);
         in_instr.write(0b0001110);
         wait(5, SC_NS);
         cout << "Test 1 - ADD: a = " << a.read() << ", b = " << b.read()
             << ", output = " << out.read() << ", expected = 15" << endl;
+
+        //test 2
+        a.write(18);
+        b.write(12);
+        in_instr.write(0b1111100);
+        wait(5, SC_NS);
+        cout << "Test 2 - ADD: a = " << a.read() << ", b = " << b.read()
+            << ", output = " << out.read() << ", expected = 30" << endl;
         std::cout << "---------------------------------------------" << std::endl;
     }
 
     void test_and() {
         std::cout << "----------------'AND' OPERATION TEST----------------" << std::endl;
+        //test 1
         a.write(15);
         b.write(5);
         in_instr.write(0b0001010);
         wait(5, SC_NS);
-        cout << "Test 2 - AND: a = " << a.read() << ", b = " << b.read()
+        cout << "Test 1 - AND: a = " << a.read() << ", b = " << b.read()
             << ", output = " << out.read() << ", expected = 5" << endl;
+
+        //test2
+        a.write(12);
+        b.write(8);
+        in_instr.write(0b1110010);
+        wait(5, SC_NS);
+        cout << "Test 2 - AND: a = " << a.read() << ", b = " << b.read()
+            << ", output = " << out.read() << ", expected = 8" << endl;
         std::cout << "---------------------------------------------" << std::endl;
     }
 
@@ -53,7 +71,7 @@ SC_MODULE(ALU_testbench) {
         a.write(0);
         in_instr.write(0b0010010);
         wait(5, SC_NS);
-        cout << "Test 3 - NOT: a = " << a.read() << ", output = " << out.read() << ", expected = 255" << endl;
+        cout << "Test 1 - NOT: a = " << a.read() << ", output = " << out.read() << ", expected = 255" << endl;
         std::cout << "---------------------------------------------" << std::endl;
     }
 
@@ -62,7 +80,7 @@ SC_MODULE(ALU_testbench) {
         a.write(10);
         in_instr.write(0b0000110);
         wait(5, SC_NS);
-        cout << "Test 4 - DECREMENTATION: a = " << a.read() << ", output = " << out.read() << ", expected = 9" << endl;
+        cout << "Test 1 - DECREMENTATION: a = " << a.read() << ", output = " << out.read() << ", expected = 9" << endl;
         std::cout << "---------------------------------------------" << std::endl;
     }
 
@@ -71,40 +89,67 @@ SC_MODULE(ALU_testbench) {
         a.write(10);
         in_instr.write(0b0010100);
         wait(5, SC_NS);
-        cout << "Test 5 - INCREMENTATION: a = " << a.read() << ", output = " << out.read() << ", expected = 11" << endl;
+        cout << "Test 1 - INCREMENTATION: a = " << a.read() << ", output = " << out.read() << ", expected = 11" << endl;
         std::cout << "---------------------------------------------" << std::endl;
     }
 
     void test_or() {
         std::cout << "----------------'OR' OPERATION TEST----------------" << std::endl;
+        //test 1
         a.write(3);
         b.write(2);
         in_instr.write(0b0001000);
         wait(5, SC_NS);
-        cout << "Test 6 - OR: a = " << a.read() << ", b = " << b.read()
+        cout << "Test 1 - OR: a = " << a.read() << ", b = " << b.read()
             << ", output = " << out.read() << ", expected = 3" << std::endl;
+
+        //test 2
+        a.write(6);
+        b.write(4);
+        in_instr.write(0b1110000);
+        wait(5, SC_NS);
+        cout << "Test 2 - OR: a = " << a.read() << ", b = " << b.read()
+            << ", output = " << out.read() << ", expected = 6" << std::endl;
         std::cout << "---------------------------------------------" << std::endl;
     }
 
     void test_subtraction() {
         std::cout << "----------------SUBTRACTION TEST----------------" << std::endl;
+        //test 1
         a.write(7);
         b.write(3);
         in_instr.write(0b0000100);
         wait(5, SC_NS);
-        cout << "Test 7 - SUBTRACTION: a = " << a.read() << ", b = " << b.read()
+        cout << "Test 1 - SUBTRACTION: a = " << a.read() << ", b = " << b.read()
             << ", output = " << out.read() << ", expected = 4" << endl;
+
+        //test 2
+        a.write(12);
+        b.write(10);
+        in_instr.write(0b1111010);
+        wait(5, SC_NS);
+        cout << "Test 2 - SUBTRACTION: a = " << a.read() << ", b = " << b.read()
+            << ", output = " << out.read() << ", expected = 2" << endl;
         std::cout << "---------------------------------------------" << std::endl;
     }
 
     void test_xor() {
         std::cout << "----------------'XOR' OPERATION TEST----------------" << std::endl;
+        //test 1
         a.write(10);
         b.write(8);
         in_instr.write(0b0001100);
         wait(5, SC_NS);
-        cout << "Test 8 - XOR: a = " << a.read() << ", b = " << b.read()
+        cout << "Test 1 - XOR: a = " << a.read() << ", b = " << b.read()
             << ", output = " << out.read() << ", expected = 2" << endl;
+
+        //test 2
+        a.write(16);
+        b.write(14);
+        in_instr.write(0b1110100);
+        wait(5, SC_NS);
+        cout << "Test 2 - XOR: a = " << a.read() << ", b = " << b.read()
+            << ", output = " << out.read() << ", expected = 30" << endl;
         std::cout << "---------------------------------------------" << std::endl;
     }
 
