@@ -16,31 +16,31 @@ SC_MODULE(ALU) {
     sc_in<sc_uint<DATA_WIDTH>> b;
 
     //part of the instruction code (bits [13:7])
-    sc_in<sc_uint<7>> in_instr;
+    sc_in<sc_uint<7>> instruction;
 
     //binded to output of the flip-flop which stores the carry value
-    sc_in<bool> ffc;
+    sc_in<bool> carryFlipFlop;
 
     //ALU output (result of an operation)
     sc_out<sc_uint<DATA_WIDTH>> output;
 
     //carry
-    sc_out<bool> c;
+    sc_out<bool> carryFlag;
 
-    //instruction group code (in_instr[6:5])
+    //instruction group code (instruction[6:5])
     sc_uint<2> instructionGroupCode;
 
-    //operation code (in_instr[4:1])
+    //operation code (instruction[4:1])
     sc_uint<4> operationCode;
 
-    //bit number (in_instr[2:0])
+    //bit number (instruction[2:0])
     sc_uint<3> bitNumber;
 
     bool traceEnabled = false;
 
     SC_CTOR(ALU) {
         SC_METHOD(alu_process);
-        sensitive << in_instr << a << b << ffc;
+        sensitive << instruction << a << b << carryFlipFlop;
     }
 
     void alu_process();
@@ -50,18 +50,18 @@ SC_MODULE(ALU) {
 
 template<int DATA_WIDTH>
 void ALU<DATA_WIDTH>::alu_process() {
-    instructionGroupCode = in_instr.read().range(6, 5);
-    operationCode = in_instr.read().range(4, 1);
-    bitNumber = in_instr.read().range(2, 0);
+    instructionGroupCode = instruction.read().range(6, 5);
+    operationCode = instruction.read().range(4, 1);
+    bitNumber = instruction.read().range(2, 0);
 
-    c = false;
+    carryFlag = false;
     switch (instructionGroupCode) {
         case 0b00: {
             switch (operationCode) {
                 case 0b0111: {
                     trace_operation("0b00", "0b0111", "addwf");
                     sc_uint<DATA_WIDTH + 1> result = a.read() + b.read();
-                    c.write(result[DATA_WIDTH]);
+                    carryFlag.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }
@@ -84,7 +84,7 @@ void ALU<DATA_WIDTH>::alu_process() {
                 case 0b1011: {
                     trace_operation("0b00", "0b0011, 0b1011", "decf, decfsz");
                     sc_uint<DATA_WIDTH + 1> result = a.read() - 1;
-                    c.write(result[DATA_WIDTH]);
+                    carryFlag.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }
@@ -92,7 +92,7 @@ void ALU<DATA_WIDTH>::alu_process() {
                 case 0b1111: {
                     trace_operation("0b00", "0b1010, 0b1111", "incf, incfsz");
                     sc_uint<DATA_WIDTH + 1> result = a.read() + 1;
-                    c.write(result[DATA_WIDTH]);
+                    carryFlag.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }
@@ -111,22 +111,22 @@ void ALU<DATA_WIDTH>::alu_process() {
                     output.write(b.read());
                     break;
                 }
-                case 0b1101: { // rlf
+                case 0b1101: {
                     trace_operation("0b00", "0b1101", "rlf");
-                    c.write(a.read()[DATA_WIDTH - 1]);
-                    output.write((a.read() << 1) | ffc.read());
+                    carryFlag.write(a.read()[DATA_WIDTH - 1]);
+                    output.write((a.read() << 1) | carryFlipFlop.read());
                     break;
                 }
-                case 0b1100: { // rrf
+                case 0b1100: {
                     trace_operation("0b00", "0b1100", "rrf");
-                    c.write(a.read()[0]);
-                    output.write((ffc.read() << (DATA_WIDTH - 1)) | (a.read() >> 1));
+                    carryFlag.write(a.read()[0]);
+                    output.write((carryFlipFlop.read() << (DATA_WIDTH - 1)) | (a.read() >> 1));
                     break;
                 }
                 case 0b0010: {
                     trace_operation("0b00", "0b0010", "subwf");
                     sc_uint<DATA_WIDTH + 1> result = a.read() - b.read();
-                    c.write(result[DATA_WIDTH]);
+                    carryFlag.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }
@@ -174,7 +174,7 @@ void ALU<DATA_WIDTH>::alu_process() {
                 case 0b1110: {
                     trace_operation("0b11", "0b1111, 0b1110", "addlw");
                     sc_uint<DATA_WIDTH + 1> result = a.read() + b.read();
-                    c.write(result[DATA_WIDTH]);
+                    carryFlag.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }
@@ -203,7 +203,7 @@ void ALU<DATA_WIDTH>::alu_process() {
                 case 0b1100: {
                     trace_operation("0b11", "0b1101, 0b1100", "sublw");
                     sc_uint<DATA_WIDTH + 1> result = a.read() - b.read();
-                    c.write(result[DATA_WIDTH]);
+                    carryFlag.write(result[DATA_WIDTH]);
                     output.write(result.range(DATA_WIDTH - 1, 0));
                     break;
                 }

@@ -164,10 +164,10 @@ SC_MODULE(Datapath) {
         ex_alu = new ALU<DATA_WIDTH>("ex_alu");
         ex_alu->a(A_ALU);
         ex_alu->b(Write_Data);
-        ex_alu->in_instr(const4);
-        ex_alu->ffc(wffc);
+        ex_alu->instruction(const4);
+        ex_alu->carryFlipFlop(wffc);
         ex_alu->output(Data_Bus);
-        ex_alu->c(c);
+        ex_alu->carryFlag(c);
 
         ex_ffc = new Ffc("ex_ffc");
         ex_ffc->clk(clk);

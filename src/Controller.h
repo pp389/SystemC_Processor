@@ -7,7 +7,7 @@ using namespace sc_core;
 using namespace sc_dt;
 
 SC_MODULE(Controller) {
-    //14-bit instruciton code
+    //14-bit instruction code
     sc_in<sc_uint<14>> instructionCode;
 
     //z signal indicates a zero value of the operation result, and the pz signal indicates a zero value of the previous operation
