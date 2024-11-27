@@ -26,7 +26,6 @@ SC_MODULE(DataMemory) {
         sensitive << a << we;
         SC_METHOD(write_memory);
         sensitive << clk.pos();
-        RAM[0] = 0xA;
     }
 };
 
@@ -54,7 +53,7 @@ template<int ADDR_SIZE, int WORD_SIZE>
 void DataMemory<ADDR_SIZE, WORD_SIZE>::dump() {
     std::cout << "Data memory dump: " << std::endl;
     for (int i = 0; i < (1 << ADDR_SIZE); i++) {
-        std::cout << "Address: [" << std::hex << i << "], value: " << std::bitset<WORD_SIZE>(RAM[i]) << std::endl;
+        std::cout << "Address: [" << std::hex << i << "], value: " << std::dec << RAM[i] << std::endl;
     }
     std::cout << std::endl;
 }
