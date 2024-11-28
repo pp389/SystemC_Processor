@@ -136,11 +136,11 @@ SC_MODULE(Datapath) {
         ex_stack->error(error_stack);
 
         ex_regfile = new RegisterFile<REGFILE_ADDR_WIDTH, REGFILE_DEPTH, DATA_WIDTH>("ex_regfile");
-        ex_regfile->clk(clk);
-        ex_regfile->we(d);
-        ex_regfile->a(f);
-        ex_regfile->wd(Data_Bus);
-        ex_regfile->rd(RF_out);
+        ex_regfile->clock(clk);
+        ex_regfile->writeEnabled(d);
+        ex_regfile->regNumber(f);
+        ex_regfile->writeData(Data_Bus);
+        ex_regfile->readData(RF_out);
 
         ex_A_ALU = new Mux2_1<DATA_WIDTH>("ex_A_ALU");
         ex_A_ALU->d0(RF_out);
