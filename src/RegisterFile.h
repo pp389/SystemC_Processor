@@ -47,7 +47,7 @@ void RegisterFile<ADDRESS_SIZE, REGISTERS_COUNT, WORD_SIZE>::trace_operation() {
 template<int ADDRESS_SIZE, int REGISTERS_COUNT, int WORD_SIZE>
 void RegisterFile<ADDRESS_SIZE, REGISTERS_COUNT, WORD_SIZE>::dump() {
     std::cout << std::endl << "[REGFILE] Register file dump" << std::endl;
-    for (int i = 0; i < DEPTH; i++) {
+    for (int i = 0; i < REGISTERS_COUNT; i++) {
         std::cout << "Register number: " << i << ", value: " << registers[i] << std::endl;
     }
 }
