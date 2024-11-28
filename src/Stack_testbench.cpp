@@ -7,7 +7,7 @@ using namespace std;
 
 SC_MODULE(StackTB) {
     //signals declaration
-    sc_signal<bool> clk;
+    sc_clock clk{"clk", 5, SC_NS};
     sc_signal<bool> reset;
     sc_signal<bool> rd;
     sc_signal<bool> wr;
@@ -17,15 +17,6 @@ SC_MODULE(StackTB) {
 
     //stack instance
     Stack<10, 3, 8> *stackInstance;
-
-    void generateClockSignal() {
-        while (true) {
-            clk.write(false);
-            wait(5, SC_NS);
-            clk.write(true);
-            wait(5, SC_NS);
-        }
-    }
 
     void test() {
         //Reset stack
@@ -72,15 +63,14 @@ SC_MODULE(StackTB) {
 
     SC_CTOR(StackTB) {
         stackInstance = new Stack<10, 3, 8>("stackInstance");
-        stackInstance->clk(clk);
+        stackInstance->clock(clk);
         stackInstance->reset(reset);
-        stackInstance->rd(rd);
-        stackInstance->wr(wr);
-        stackInstance->data_in(data_in);
-        stackInstance->data_out(data_out);
-        stackInstance->error(error);
+        stackInstance->readEnabled(rd);
+        stackInstance->writeEnabled(wr);
+        stackInstance->dataInput(data_in);
+        stackInstance->dataOutput(data_out);
+        stackInstance->errorFlag(error);
 
-        SC_THREAD(generateClockSignal);
         SC_THREAD(test);
     }
 

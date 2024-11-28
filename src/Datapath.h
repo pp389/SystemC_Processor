@@ -127,13 +127,13 @@ SC_MODULE(Datapath) {
         ex_adder->carryOut(error_imem);
 
         ex_stack = new Stack<IADDR_WIDTH, STACK_ADDR_WIDTH, STACK_DEPTH>("ex_stack");
-        ex_stack->data_in(PCPlus);
-        ex_stack->clk(clk);
+        ex_stack->dataInput(PCPlus);
+        ex_stack->clock(clk);
         ex_stack->reset(reset);
-        ex_stack->rd(rstack);
-        ex_stack->wr(wstack);
-        ex_stack->data_out(PC4);
-        ex_stack->error(error_stack);
+        ex_stack->readEnabled(rstack);
+        ex_stack->writeEnabled(wstack);
+        ex_stack->dataOutput(PC4);
+        ex_stack->errorFlag(error_stack);
 
         ex_regfile = new RegisterFile<REGFILE_ADDR_WIDTH, REGFILE_DEPTH, DATA_WIDTH>("ex_regfile");
         ex_regfile->clock(clk);
