@@ -60,11 +60,11 @@ SC_MODULE(TopLevel) {
         instructionMemory->rd(IRD);
 
         dataMemory = new DataMemory<DADDR_WIDTH, DATA_WIDTH>("dataMemory");
-        dataMemory->clk(clk);
-        dataMemory->we(sw);
-        dataMemory->a(DAddr);
-        dataMemory->wd(Write_Data);
-        dataMemory->rd(Read_Data);
+        dataMemory->clock(clk);
+        dataMemory->writeEnabled(sw);
+        dataMemory->address(DAddr);
+        dataMemory->writeData(Write_Data);
+        dataMemory->readData(Read_Data);
 
         SC_METHOD(assign_instr);
         sensitive << IRD;
