@@ -34,7 +34,7 @@ SC_MODULE(TopLevel) {
         STACK_ADDR_WIDTH, REGFILE_ADDR_WIDTH, STACK_DEPTH, REGFILE_DEPTH
     >* processor;
 
-    InstructionMemory<IADDR_WIDTH, (1 << IADDR_WIDTH), 16>* instructionMemory;
+    InstructionMemory<IADDR_WIDTH, 16>* instructionMemory;
     DataMemory<DADDR_WIDTH, DATA_WIDTH>* dataMemory;
 
     SC_CTOR(TopLevel) {
@@ -55,9 +55,9 @@ SC_MODULE(TopLevel) {
         processor->error_stack(error_stack);
         processor->Data_Bus(Data_Bus);
 
-        instructionMemory = new InstructionMemory<IADDR_WIDTH, (1 << IADDR_WIDTH), 16>("instructionMemory");
-        instructionMemory->a(IAddr);
-        instructionMemory->rd(IRD);
+        instructionMemory = new InstructionMemory<IADDR_WIDTH, 16>("instructionMemory");
+        instructionMemory->address(IAddr);
+        instructionMemory->instruction(IRD);
 
         dataMemory = new DataMemory<DADDR_WIDTH, DATA_WIDTH>("dataMemory");
         dataMemory->clock(clk);
