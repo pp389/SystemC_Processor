@@ -43,17 +43,17 @@ SC_MODULE(TopLevel) {
             STACK_ADDR_WIDTH, REGFILE_ADDR_WIDTH, STACK_DEPTH, REGFILE_DEPTH
         >("processor");
 
-        processor->clk(clk);
+        processor->clock(clk);
         processor->reset(reset);
-        processor->Instr(Instr);
-        processor->Read_Data(Read_Data);
-        processor->IAddr(IAddr);
-        processor->DAddr(DAddr);
-        processor->Write_Data(Write_Data);
+        processor->instructionCode(Instr);
+        processor->dataFromDataMem(Read_Data);
+        processor->instructionMemAddress(IAddr);
+        processor->dataMemAddress(DAddr);
+        processor->dataToWriteToDataMem(Write_Data);
         processor->sw(sw);
-        processor->error_imem(error_imem);
-        processor->error_stack(error_stack);
-        processor->Data_Bus(Data_Bus);
+        processor->instructionMemError(error_imem);
+        processor->stackError(error_stack);
+        processor->dataBus(Data_Bus);
 
         instructionMemory = new InstructionMemory<IADDR_WIDTH, 16>("instructionMemory");
         instructionMemory->address(IAddr);
