@@ -22,52 +22,52 @@ SC_MODULE(Processor) {
     sc_signal<bool> gocall, skip, ti, lw, wew, z;
     sc_signal<bool> rstack, wstack, d, pz, gotoznz;
 
-    Datapath *ex_datapath;
-    Controller *ex_controller;
+    Datapath *datapath;
+    Controller *controller;
 
     SC_CTOR(Processor) {
-        ex_datapath = new Datapath("ex_datapath");
-        ex_datapath->clk(clk);
-        ex_datapath->reset(reset);
-        ex_datapath->Instr(Instr);
-        ex_datapath->rstack(rstack);
-        ex_datapath->wstack(wstack);
-        ex_datapath->gocall(gocall);
-        ex_datapath->skip(skip);
-        ex_datapath->d(d);
-        ex_datapath->ti(ti);
-        ex_datapath->lw(lw);
-        ex_datapath->wew(wew);
-        ex_datapath->Read_Data(Read_Data);
-        ex_datapath->gotoznz(gotoznz);
-        ex_datapath->IAddr(IAddr);
-        ex_datapath->DAddr(DAddr);
-        ex_datapath->Write_Data(Write_Data);
-        ex_datapath->error_imem(error_imem);
-        ex_datapath->error_stack(error_stack);
-        ex_datapath->z(z);
-        ex_datapath->Data_Bus(Data_Bus);
-        ex_datapath->pz(pz);
+        datapath = new Datapath("ex_datapath");
+        datapath->clk(clk);
+        datapath->reset(reset);
+        datapath->Instr(Instr);
+        datapath->rstack(rstack);
+        datapath->wstack(wstack);
+        datapath->gocall(gocall);
+        datapath->skip(skip);
+        datapath->d(d);
+        datapath->ti(ti);
+        datapath->lw(lw);
+        datapath->wew(wew);
+        datapath->Read_Data(Read_Data);
+        datapath->gotoznz(gotoznz);
+        datapath->IAddr(IAddr);
+        datapath->DAddr(DAddr);
+        datapath->Write_Data(Write_Data);
+        datapath->error_imem(error_imem);
+        datapath->error_stack(error_stack);
+        datapath->z(z);
+        datapath->Data_Bus(Data_Bus);
+        datapath->pz(pz);
 
-        ex_controller = new Controller("ex_controller");
-        ex_controller->instructionCode(Instr);
-        ex_controller->z(z);
-        ex_controller->pz(pz);
-        ex_controller->readStack(rstack);
-        ex_controller->writeStack(wstack);
-        ex_controller->goCall(gocall);
-        ex_controller->skip(skip);
-        ex_controller->registerFileWrite(d);
-        ex_controller->ti(ti);
-        ex_controller->lw(lw);
-        ex_controller->accumulatorWrite(wew);
-        ex_controller->sw(sw);
-        ex_controller->gotoznz(gotoznz);
+        controller = new Controller("ex_controller");
+        controller->instructionCode(Instr);
+        controller->z(z);
+        controller->pz(pz);
+        controller->readStack(rstack);
+        controller->writeStack(wstack);
+        controller->goCall(gocall);
+        controller->skip(skip);
+        controller->registerFileWrite(d);
+        controller->ti(ti);
+        controller->lw(lw);
+        controller->accumulatorWrite(wew);
+        controller->sw(sw);
+        controller->gotoznz(gotoznz);
     }
 
     ~Processor() {
-        delete ex_datapath;
-        delete ex_controller;
+        delete datapath;
+        delete controller;
     }
 };
 

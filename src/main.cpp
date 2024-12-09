@@ -36,10 +36,10 @@ int sc_main(int argc, char* argv[]) {
     reset = true;
 
     // Rozpoczęcie symulacji na 100 ns, aby procesor mógł odczytać instrukcje i je wykonać
-    sc_start(100, SC_NS);
+    sc_start(150, SC_NS);
 
-    top->processor->ex_datapath->ex_regfile->dump();
-    std::cout << "ACCUMULATOR: " << top->processor->ex_datapath->ex_W->q << std::endl;
+    std::cout << "ACCUMULATOR: " << top->processor->datapath->ex_W->q << std::endl;
+    top->processor->datapath->ex_regfile->dump();
     top->dataMemory->dump();
 
     // Zwolnienie pamięci
